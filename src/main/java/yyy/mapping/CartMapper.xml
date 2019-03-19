@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="yyy.dao.CartMapper">
+  <resultMap id="BaseResultMap" type="yyy.pojo.Cart">
+    <id column="cid" jdbcType="INTEGER" property="cid" />
+    <result column="fid" jdbcType="INTEGER" property="fid" />
+    <result column="num" jdbcType="INTEGER" property="num" />
+    <result column="uid" jdbcType="INTEGER" property="uid" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    cid, fid, num, uid
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from t_cart
+    where cid = #{cid,jdbcType=INTEGER}
+  </select>
+
+  <!--从购物车删除菜品-->
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from t_cart
+    where cid = #{cid,jdbcType=INTEGER}
+  </delete>
+
+  <insert id="insert" parameterType="yyy.pojo.Cart">
+    insert into t_cart (cid, fid, num, 
+      uid)
+    values (#{cid,jdbcType=INTEGER}, #{fid,jdbcType=INTEGER}, #{num,jdbcType=INTEGER}, 
+      #{uid,jdbcType=INTEGER})
+  </insert>
+  <!--添加菜品到购物车-->
+  <insert id="insertSelective" parameterType="yyy.pojo.Cart">
+    insert into t_cart
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="cid != null">
+        cid,
+      </if>
+      <if test="fid != null">
+        fid,
+      </if>
+      <if test="num != null">
+        num,
+      </if>
+      <if test="uid != null">
+        uid,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="cid != null">
+        #{cid,jdbcType=INTEGER},
+      </if>
+      <if test="fid != null">
+        #{fid,jdbcType=INTEGER},
+      </if>
+      <if test="num != null">
+        #{num,jdbcType=INTEGER},
+      </if>
+      <if test="uid != null">
+        #{uid,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="yyy.pojo.Cart">
+    update t_cart
+    <set>
+      <if test="fid != null">
+        fid = #{fid,jdbcType=INTEGER},
+      </if>
+      <if test="num != null">
+        num = #{num,jdbcType=INTEGER},
+      </if>
+      <if test="uid != null">
+        uid = #{uid,jdbcType=INTEGER},
+      </if>
+    </set>
+    where cid = #{cid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="yyy.pojo.Cart">
+    update t_cart
+    set fid = #{fid,jdbcType=INTEGER},
+      num = #{num,jdbcType=INTEGER},
+      uid = #{uid,jdbcType=INTEGER}
+    where cid = #{cid,jdbcType=INTEGER}
+  </update>
+
+  <select id="showUserCart" parameterType="java.lang.Integer" resultType="yyy.vo.VCart">
+
+SELECT u.uid,c.cid,f.imgpath,f.foodname,c.num,f.price
+				 FROM t_cart c
+				 INNER JOIN t_food f
+				 ON c.fid = f.fid
+				 INNER JOIN t_user u
+				 ON c.uid = u.uid
+				 WHERE u.uid =#{uid}
+
+
+  </select>
+
+
+
+
+</mapper>

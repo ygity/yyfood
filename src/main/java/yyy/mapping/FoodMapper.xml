@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="yyy.dao.FoodMapper">
+  <resultMap id="BaseResultMap" type="yyy.pojo.Food">
+    <id column="fid" jdbcType="INTEGER" property="fid" />
+    <result column="foodname" jdbcType="VARCHAR" property="foodname" />
+    <result column="price" jdbcType="DOUBLE" property="price" />
+    <result column="typeid" jdbcType="INTEGER" property="typeid" />
+    <result column="imgpath" jdbcType="VARCHAR" property="imgpath" />
+    <result column="createdate" jdbcType="TIMESTAMP" property="createdate" />
+    <result column="comment" jdbcType="VARCHAR" property="comment" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    fid, foodname, price, typeid, imgpath, createdate, comment
+  </sql>
+  <!--    展示食物详细信息应用页面xiangqing-->
+  <select id="selectByPrimaryKey1" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from t_food
+    where fid = #{fid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from t_food
+    where fid = #{fid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="yyy.pojo.Food">
+    insert into t_food (fid, foodname, price, 
+      typeid, imgpath, createdate, 
+      comment)
+    values (#{fid,jdbcType=INTEGER}, #{foodname,jdbcType=VARCHAR}, #{price,jdbcType=DOUBLE}, 
+      #{typeid,jdbcType=INTEGER}, #{imgpath,jdbcType=VARCHAR}, #{createdate,jdbcType=TIMESTAMP}, 
+      #{comment,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="yyy.pojo.Food">
+    insert into t_food
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="fid != null">
+        fid,
+      </if>
+      <if test="foodname != null">
+        foodname,
+      </if>
+      <if test="price != null">
+        price,
+      </if>
+      <if test="typeid != null">
+        typeid,
+      </if>
+      <if test="imgpath != null">
+        imgpath,
+      </if>
+      <if test="createdate != null">
+        createdate,
+      </if>
+      <if test="comment != null">
+        comment,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="fid != null">
+        #{fid,jdbcType=INTEGER},
+      </if>
+      <if test="foodname != null">
+        #{foodname,jdbcType=VARCHAR},
+      </if>
+      <if test="price != null">
+        #{price,jdbcType=DOUBLE},
+      </if>
+      <if test="typeid != null">
+        #{typeid,jdbcType=INTEGER},
+      </if>
+      <if test="imgpath != null">
+        #{imgpath,jdbcType=VARCHAR},
+      </if>
+      <if test="createdate != null">
+        #{createdate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="comment != null">
+        #{comment,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="yyy.pojo.Food">
+    update t_food
+    <set>
+      <if test="foodname != null">
+        foodname = #{foodname,jdbcType=VARCHAR},
+      </if>
+      <if test="price != null">
+        price = #{price,jdbcType=DOUBLE},
+      </if>
+      <if test="typeid != null">
+        typeid = #{typeid,jdbcType=INTEGER},
+      </if>
+      <if test="imgpath != null">
+        imgpath = #{imgpath,jdbcType=VARCHAR},
+      </if>
+      <if test="createdate != null">
+        createdate = #{createdate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="comment != null">
+        comment = #{comment,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where fid = #{fid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="yyy.pojo.Food">
+    update t_food
+    set foodname = #{foodname,jdbcType=VARCHAR},
+      price = #{price,jdbcType=DOUBLE},
+      typeid = #{typeid,jdbcType=INTEGER},
+      imgpath = #{imgpath,jdbcType=VARCHAR},
+      createdate = #{createdate,jdbcType=TIMESTAMP},
+      comment = #{comment,jdbcType=VARCHAR}
+    where fid = #{fid,jdbcType=INTEGER}
+  </update>
+
+  <!--展示餐单列表-->
+  <select id="findMenuInfo" resultType="yyy.vo.VMenuInfo" >
+
+select p.typeid,c.typename,f.* from t_foodtype p
+				 INNER JOIN t_foodtype c
+				 on p.typeid  = c.pid
+				 INNER JOIN t_food f
+				 on f.typeid = c.typeid
+				 where p.standard = 1
+
+  </select>
+  <!--通过Id展示菜品-->
+  <select id="FindFoodByPid" parameterType="java.lang.Integer" resultType="yyy.vo.VFood">
+SELECT t.fid,t.foodname,p.typename,t.price,t.imgpath FROM t_food t
+INNER JOIN t_foodtype p
+ON t.typeid = p.typeid
+
+WHERE p.pid = #{pid}
+
+  </select>
+
+  <select id="findFood"   resultType="yyy.vo.VFood">
+    SELECT t.fid,t.foodname,p.typename,t.price,t.imgpath FROM t_food t
+INNER JOIN t_foodtype p
+ON t.typeid = p.typeid
+
+
+  </select>
+
+  <select id="showAllByPage" resultType="yyy.vo.VFood">
+
+SELECT t.fid,t.foodname,p.typename,t.price,t.imgpath FROM t_food t
+INNER JOIN t_foodtype p
+ON t.typeid = p.typeid
+
+  </select>
+
+
+  <!--    展示食物详细信息应用页面xiangqing-->
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultType="yyy.vo.VFood">
+    SELECT t.fid, t.foodname,t.price,t.imgpath,t.createdate,t.comment  FROM t_food t
+    where t.fid = #{fid}
+  </select>
+</mapper>

@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+</body>
+</html><!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>列表</title>
+
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="layui/css/layui.css">
+    <link rel="stylesheet" type="text/css" href="./css/style.css">
+
+    <script type="application/javascript" src="js/jquery-3.3.1.js"></script>
+    <script type="application/javascript" src="js/bootstrap.min.js"></script>
+    <script type="application/javascript" src="layui/layui.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <script src="js/vue.js"></script>
+
+
+</head>
+<body>
+
+<header style="background-color:blueviolet">
+    <div class="top center">
+        <div class="left fl">
+            <ul>
+                <li><a href="index.html" target="_blank">yy美食</a></li>
+                <li>|</li>
+                <li><a href="index.html">首页</a></li>
+                <li>|</li>
+                <li><a href="">美食</a></li>
+                <li>|</li>
+                <li><a href="">菜谱</a></li>
+                <li>|</li>
+                <li><a href="">互动</a></li>
+                <li>|</li>
+                <li><a href="">食材</a></li>
+                <li>|</li>
+                <li><a href="">珍选</a></li>
+                <li>|</li>
+                <li><a href="">专题</a></li>
+                <li>|</li>
+                <li><a href="">活动</a></li>
+                <li>|</li>
+                <li><a href="">Select Region</a></li>
+                <div class="clear"></div>
+            </ul>
+        </div>
+        <div class="right fr">
+            <div class="gouwuche fr"><a href="gouwuche.html">购物车</a></div>
+            <div class="fr">
+                <ul>
+                    <li><a href="./login.html" target="_blank">登录</a></li>
+
+                    <li>|</li>
+                    <li><a href="./register.html" target="_blank" >注册</a></li>
+                    <li>|</li>
+
+                </ul>
+            </div>
+            <div class="clear"></div>
+        </div>
+        <div class="clear"></div>
+    </div>
+</header>
+
+
+<div class="biaoti center">
+    <a href="index.html"><img src="image/yy.png"  width="130px" height="80px"/></a>
+    美食列表</div>
+
+
+
+<div class="layui-container">
+    <div class="layui-row" >
+
+
+        <div id="info1"  >
+            <div v-for="p in list" >
+
+                <div class="layui-col-md3 layui-col-xs3" style="margin-top: 20px; padding: 30px;" >
+                    <a @click="tz(p.fid)"><img :src="p.imgpath" alt="" width="100%" alt=""  style="width: 240px; height: 240px;"></a>
+                    <p style="text-align: center"><a href="xiangqing.html">{{p.foodname}}</a></p>
+                    <p style="text-align: center">{{p.typename}}</p>
+                    <p style="text-align: center"><span>{{p.price}}</span><span>元</span></p>
+                    <a @click="order(p.fid)"><img src="image/buy.png" style="height: 40px;width: 40px"></a>
+                    <a @click="cart(p.fid)" ><img src="image/cart.png" style="height: 40px;width: 40px"></a>
+                </div>
+
+            </div>
+        </div>
+
+
+
+    </div>
+</div>
+
+
+
+
+
+<script>
+
+    var pid = window.location.search;
+    $(function(){
+        FindFoodByPid(pid);
+    })
+
+
+    function FindFoodByPid(pid) {
+
+
+    var appData=new Vue({
+        el: '#info1',
+        data: {
+            list:[]
+        },
+        mounted(){
+            var _this=this;
+            $.ajax({
+                type:"post",
+                url:"FindFoodByPid.do" + pid ,
+                dataType:"json",
+                async:false,
+                success:function(data){
+                    _this.list=data.info
+                    console.log(_this.list)
+                },
+                error:function() {
+                    alert("ajax请求失败");
+                }
+            })
+        },
+        methods: {
+            tz: function (fid) {
+                location.href = 'xiangqing.html?fid=' + fid;
+
+            }, cart: function (fid) {
+                $.ajax({
+                    type: "post",
+                    url: "addFoodToCart.do?fid=" + fid,
+                    dataType: "json",
+                    async: false,
+                    success: function (data) {
+                        if (data.code == 1) {
+                            window.location.href = "gouwuche.html";
+                        } else {
+                            alert(data.info);
+                        }
+                    },
+                    error: function () {
+                        alert("ajax请求失败");
+                    }
+                })
+            }
+        }
+    })
+
+
+    }
+</script>
+
+
+
+
+<div id="test1" style="text-align: center;"></div>
+
+<!--<script src="/static/build/layui.js"></script>-->
+<script>
+    layui.use('laypage', function(){
+        var laypage = layui.laypage;
+
+        //执行一个laypage实例
+        laypage.render({
+            elem: 'test1' //注意，这里的 test1 是 ID，不用加 # 号
+            ,count: 500 //数据总数，从服务端得到
+        });
+    });
+</script>
+
+
+
+<div class=" line">
+    <footer class="mt20 center">
+        <div class="mt20">YY美食|首页|美食|菜谱|互动|专题|食材|珍选|隐私政策|Select Region</div>
+        <div>©mi.com 京ICP证110507号 京ICP备10046444号 京公网安备11010802020134号 京网文[2014]0059-0009号</div>
+        <div>违法和不良信息举报电话：185-0130-1238，本网站所列数据，除特殊说明，所有数据均出自我司实验室测试</div>
+    </footer>
+
+</div>
+
+</body>
+</html>

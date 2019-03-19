@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html xmlns:v-bind="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta charset="UTF-8">
+		<title>购物车</title>
+	
+		
+		<link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="layui/css/layui.css">
+		<link rel="stylesheet" type="text/css" href="./css/style.css">
+
+	<script type="application/javascript" src="js/jquery-3.3.1.js"></script>
+    <script type="application/javascript" src="js/bootstrap.min.js"></script>
+    <script type="application/javascript" src="layui/layui.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+	<script src="js/vue.js"></script>
+
+		<style>
+			html{
+				background: #E2CCA3;
+			}
+			#ds{
+				background-color: #A4967D;
+				width: 190px;
+			}
+			#twocaidan{
+				float: right;
+				overflow: hidden;
+				text-align: center;
+
+
+			}
+			#d2{
+				font-size: x-large;
+				font-weight: bolder;
+				color: black;
+
+			}
+
+		</style>
+
+	</head>
+	<body>
+		<!-- start banner_x -->
+		<div class="banner_x center">
+			<a href="./index.html" target="_blank"><div class="logo fl"></div></a>
+			
+			<div class="wdgwc fl ml40">
+				<a href="index.html"><img src="image/yy.png"  width="130px" height="80px"/></a>
+				
+				我的餐车</div>
+			<div class="wxts fl ml20">温馨提示：产品是否购买成功，以最终下单为准哦，请尽快结算</div>
+			<div class="dlzc fr">
+				<ul>
+					<li><a href="./login.html" target="_blank">登录</a></li>
+					<li>|</li>
+					<li><a href="./register.html" target="_blank">注册</a></li>	
+				</ul>
+				
+			</div>
+			<div class="clear"></div>
+		</div>
+
+		<div class="row">
+			 <div class="col-md-2">
+                <div class="sub_top fl" style="margin-left: 100px;margin-top: 30px">
+                     <input type="checkbox" value="quanxuan" class="quanxuan" onclick="swapCheck()"/>全选
+                 </div>
+             </div>
+			<div class="col-md-10">
+				<div id="info">
+					<div v-for="p in list">
+						<div class="col-md-9">
+							<div class="row" style="margin-top: 70px;margin-left: 100px">
+								<div class="col-md-1"style="margin-top: 80px">
+                                  <input type="checkbox" value="quanxuan" class="quanxuan" />
+                                </div>
+								<div class="col-xs-6 col-md-3">
+									<div class="thumbnail layui-anim layui-anim-scaleSpring ">
+										<img :src="p.imgpath" alt="...">
+
+									</div>
+
+								</div>
+
+								<div class="col-xs-6 col-md-3" style="margin: 15px" >
+
+									<h3 style="font-size: large"><strong>{{p.foodname}}</strong></h3>
+									<p><span>{{p.num}}</span></p>
+									<p><span>{{p.price}}</span><span>元</span></p>
+
+								</div>
+								<div class="col-md-1" style="float: right;margin-top: 80px">
+									<a @click="spdetail(p.cid)"><img src="image/shanchu.png" style="height: 30px;width: 30px"></a>
+									<a @click="order(p.fid)"><img src="image/buy.png" style="height: 40px;width: 40px"></a>
+								</div>
+
+							</div>
+						</div>
+
+					</div>
+				</div>
+
+			</div>
+
+
+
+		<!--	<div class="row">
+				<div class="col-md-12" >
+					<p style="float: left;margin-left: 80px "><a href="index.html"  id="d6">继续选择</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+					&lt;!&ndash;<p style="float: left">|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+                    <div id="d6">
+                        <p style="float: left">共</p>
+                        <p style="float: left" id="totalNum">2</p>
+                        <p style="float: left">个选择，</p>
+                    </div>
+                    <div id="d6">
+                        <p style="float: left"> 已选择</p>
+                        <p style="float: left" id="selNum">1</p>
+                        <p style="float: left">个</p>
+                    </div>&ndash;&gt;
+
+
+					<p style="float: right;margin-right: 80px" class="layui-btn layui-btn-danger" >去结算</p>
+					<div style="margin-top: 10px;color: orangered">
+						<p style="float: right;margin-right: 50px">元</p>
+						<p style="float: right" name="totalPrice">199</p>
+						<p  style="float: right">合计:</p>
+					</div>
+
+
+				</div>
+
+
+
+			</div>
+-->
+
+
+			<script>
+				var appData=new Vue({
+					el: '#info',
+					data: {
+						list:[]
+					},
+
+					mounted(){
+						/*var page =  window.location.search;*/
+						var _this=this;
+
+						$.ajax({
+							type:"post",
+							url:"showUserCart.do",
+							dataType:"json",
+							async:false,
+							success:function(data){
+								if (data.code == 1) {
+
+									_this.list=data.info;
+									console.log(_this.list)
+								}else {
+									alert(data.info);
+								}
+							},
+							error:function() {
+								alert("ajax请求失败");
+							}
+						})
+					},
+					methods: {
+						spdetail: function (cid) {
+							$.ajax({
+								type:"post",
+								url:"deleteByPrimaryKey.do?cid="+cid,
+								dataType:"json",
+								async:false,
+								success:function(data){
+									if (data.code==1) {
+										window.location.href="gouwuche.html";
+									} else {
+										alert(data.info);
+									}
+								},
+								error:function() {
+									alert("ajax请求失败");
+								}
+							})
+						},
+						order: function (fid) {
+							$.ajax({
+								type:"post",
+								url:"insertSelective.do?fid="+ fid,
+								dataType:"json",
+								async:false,
+								success:function(data){
+									if (data.code==1) {
+										window.location.href="dingdanzhongxin.html";
+									} else {
+										alert(data.info);
+									}
+								},
+								error:function() {
+									alert("ajax请求失败");
+								}
+							})
+						}
+					}
+				})
+			</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	<div class="xiantiao"></div>
+		<div class="gwcxqbj">
+			<!--<div class="gwcxd center" id="cartInfo">
+				<div class="top2 center">
+					<div class="sub_top fl">
+						<input type="checkbox" value="quanxuan" id="quanxuan" />全选
+					</div>
+					<div class="sub_top fl">食物名称</div>
+					<div class="sub_top fl">单价</div>
+					<div class="sub_top fl">数量</div>
+					<div class="sub_top fl">小计</div>
+					<div class="sub_top fr">操作</div>
+					<div class="clear"></div>
+				</div>
+				-->
+				&lt;!&ndash;
+				<!--<div class="content2 center">
+					<div class="sub_content fl ">
+						<input type="checkbox" value="quanxuan" class="quanxuan" />
+					</div>
+					<div class="sub_content fl"><img src="image/chocolatel.jpg" width="50px" height="50px"></div>
+					<div class="sub_content fl ft20">酒心巧克力</div>
+					<div class="sub_content fl ">43元</div>
+					<div class="sub_content fl">
+						<input class="shuliang" type="number" value="1" step="1" min="1" >
+					</div>
+					<div class="sub_content fl">43元</div>
+					<div class="sub_content fl"><a href="">×</a></div>
+					<div class="clear"></div>
+				</div> -->
+
+				&ndash;&gt;
+				
+			</div>
+			<div class="jiesuandan mt20 center">
+				<div class="tishi fl ml20">
+					<ul>
+						<li><a href="./index.html">继续选购</a></li>
+						<li>|</li>
+						<li>共<span id="totalNum">0</span>件食物，已选择<span id="selNum">0</span>件</li>
+						<div class="clear"></div>
+					</ul>
+				</div>
+				<div class="jiesuan fr">
+					<div class="jiesuanjiage fl">合计：<span id="totalPrice">0.00</span>元</div>
+					<div class="jsanniu fr"><input class="jsan" type="button" name="jiesuan"  value="去结算" onclick="buyClick()"/></div>
+					<div class="clear"></div>
+				</div>
+				<div class="clear"></div>
+			</div>
+			
+			
+			<div id="test1" style="text-align: center;"></div>
+ 
+
+<script>
+layui.use('laypage', function(){
+  var laypage = layui.laypage;
+  
+  //执行一个laypage实例
+  laypage.render({
+    elem: 'test1' //注意，这里的 test1 是 ID，不用加 # 号
+    ,count: 500 //数据总数，从服务端得到
+  });
+});
+</script>
+
+			
+		</div>
+
+
+
+		<script type="text/javascript">
+			$(function(){
+				$.ajax({
+					type:"get",
+					url:"showUserCart.do",
+					dataType:"json",
+					success:function(data){
+						if(data.code == 1){
+							var infos = data.info;
+							$(infos).each(function(data){
+								var html = '<div class="content2 center">';
+								html += '<div class="sub_content fl ">';
+								html += '<input type="checkbox" name="id" value="' + this.cid + '" class="quanxuan" />';
+								html += '</div>';
+								html += '<div class="sub_content fl"><img src="/img/' + this.imgpath +'" width ="40px" height ="40px"></div>';
+								html += '<div class="sub_content fl ft20">' + this.foodname + '</div>';
+								html += '<div class="sub_content fl"><span class="price">' + this.price + '</span>元</div>';
+								html += '<div class="sub_content fl">';
+								html += '<input class="shuliang" name="num" type="number" value="' + this.num + '" step="1" min="1" onchange="cNumInfo(this, ' + this.price + ')">';
+								html += '</div>';
+								html += '<div class="sub_content fl">' + (this.price * this.num) + '元</div>';
+								html += '<div class="sub_content fl"><a href=""  onclick="delClick('+this.cid+')">×</a></div>';
+								html += '<div class="clear"></div>';
+								html += '</div>';
+
+								$("#cartInfo").append($(html));
+							})
+
+							// 设置全选事件
+							$("#quanxuan").click(function(){
+								if(this.checked){
+									$(".quanxuan").prop("checked",true);
+								}else{
+									$(".quanxuan").prop("checked",false);
+								}
+
+								calTotalMoney();
+
+							})
+							// 设置选中某个复选框的事件
+							$(".quanxuan").click(function(){
+								if(this.checked == false){
+									$("#quanxuan").prop("checked",false);
+								}
+								// 计算总价
+								calTotalMoney();
+							})
+						}
+					}
+
+				})
+			})
+		</script>
+
+
+		<script type="text/javascript">
+			// 计算修改数量后，某个商品的总价
+			function cNumInfo(numEle, price){
+				// 找到要显示价格的元素
+				var ele = numEle.parentNode.nextSibling;
+				//alert(ele.innerHTML);
+				var v = parseInt(numEle.value) * parseFloat(price);
+				ele.innerHTML = v + "元";
+				// 修改数量后，计算总价
+				calTotalMoney();
+			}
+
+			// 根据选择的checkbox，计算所选的商品的总价
+			function calTotalMoney(){
+				// 选中的商品
+				var arr = $(".quanxuan:checked");
+				// 所有的商品
+				var checkboxs = $(".quanxuan");
+				var prices = $(".price");
+				var nums = $(".shuliang");
+				var sum = 0;
+				for(var i = 0; i < checkboxs.length; i++){
+					if(checkboxs[i].checked){
+						sum += parseFloat(prices[i].innerHTML) * parseInt(nums[i].value);
+					}
+				}
+				$("#totalNum").html(checkboxs.length);
+				$("#selNum").html(arr.length);
+				$("#totalPrice").html(sum);
+			}
+		</script>
+
+		<script type="text/javascript">
+			function buyClick(){
+				var arr = $(".quanxuan:checked");
+				if(arr.length == 0){
+					alert("没有选中购物车中商品，无法结算");
+					return;
+				}
+				var data = "";
+				var checkboxs = $(".quanxuan");
+				var nums = $(".shuliang");
+				for(var i = 0; i < checkboxs.length; i++){
+					if(checkboxs[i].checked){
+						data += "gid=" + checkboxs[i].value + "&";
+						data += "num=" + nums[i].value + "&";
+					}
+				}
+				var totalprice=$('#totalPrice')[0].innerHTML;
+				console.log(totalprice);
+				data+="totalprice="+totalprice;
+				$.ajax({
+					type:"get",
+					url:"insert.do",
+					//data:{gid:ids,num:num},
+					data:data,
+					dataType:"json",
+					success:function(data){
+						if(data.code == 1){
+							window.location.href = "index.html";
+						}else{
+							alert(data.info);
+						}
+					}
+
+
+				})
+			}
+
+		</script>
+		<script type="text/javascript">
+			function delClick(cid){
+				$.ajax({
+					type:"post",
+					url:"deleteByPrimaryKey.do"+ cid,
+					dataType:"json",
+					success:function(data){
+						if(data.code == 1){
+							loadData();
+						}else{
+							alert(data.info);
+
+						}
+					},
+					error:function(){
+						alert("删除失败");
+					}
+				})
+
+			}
+		</script>
+
+
+
+
+
+		</div>
+	</body>
+</html>
